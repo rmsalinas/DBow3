@@ -18,7 +18,7 @@
 
 using namespace std;
 
-namespace DBoW2 {
+namespace DBoW3 {
 
 // --------------------------------------------------------------------------
 
@@ -244,5 +244,5 @@ void DescManip::toMat32F(const std::vector<cv::Mat> &descriptors,
 
 // --------------------------------------------------------------------------
 
-} // namespace DBoW2
+} // namespace DBoW3
 

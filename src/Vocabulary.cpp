@@ -1,6 +1,6 @@
 #include "Vocabulary.h"
 #include "DescManip.h"
-namespace DBoW2{
+namespace DBoW3{
 // --------------------------------------------------------------------------
 
 

@@ -8,15 +8,14 @@
  *
  */
 
-/*! \mainpage DBoW2 Library
+/*! \mainpage DBoW3 Library
  *
- * DBoW2 library for C++:
+ * DBoW3 library for C++:
  * Bag-of-word image database for image retrieval.
  *
- * Written by Dorian Galvez-Lopez,
- * University of Zaragoza
+ * Written by Rafael Muñoz Salinas,
+ * University of Cordoba (Spain)
  * 
- * Check my website to obtain updates: http://doriangalvez.com
  *
  * \section requirements Requirements
  * This library requires the   OpenCV libraries,
@@ -52,8 +51,8 @@
  *
  */
 
-#ifndef __D_T_DBOW2__
-#define __D_T_DBOW2__
+#ifndef __D_T_DBOW3__
+#define __D_T_DBOW3__
 
 /// Includes all the data structures to manage vocabularies and image databases
 

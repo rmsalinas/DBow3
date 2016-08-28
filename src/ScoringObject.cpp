@@ -11,7 +11,7 @@
 #include "Vocabulary.h"
 #include "BowVector.h"
 
-using namespace DBoW2;
+using namespace DBoW3;
 
 // If you change the type of WordValue, make sure you change also the
 // epsilon value (this is needed by the KL method)

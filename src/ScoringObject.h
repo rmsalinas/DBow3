@@ -12,7 +12,7 @@
 
 #include "BowVector.h"
 #include "exports.h"
-namespace  DBoW2 {
+namespace  DBoW3 {
 
 /// Base class of scoring functions
 class  DBOW_API GeneralScoring
@@ -89,7 +89,7 @@ class __SCORING_CLASS(DotProductScoring, false, L1);
 
 #undef __SCORING_CLASS
   
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif
 

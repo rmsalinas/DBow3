@@ -15,7 +15,7 @@
 
 #include "BowVector.h"
 
-namespace DBoW2 {
+namespace DBoW3 {
 
 // --------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ void BowVector::normalize(LNorm norm_type)
   double norm = 0.0; 
   BowVector::iterator it;
 
-  if(norm_type == DBoW2::L1)
+  if(norm_type == DBoW3::L1)
   {
     for(it = begin(); it != end(); ++it)
       norm += fabs(it->second);
@@ -126,5 +126,5 @@ void BowVector::saveM(const std::string &filename, size_t W) const
 
 // --------------------------------------------------------------------------
 
-} // namespace DBoW2
+} // namespace DBoW3
 

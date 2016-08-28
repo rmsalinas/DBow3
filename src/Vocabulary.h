@@ -24,7 +24,7 @@
 #include "BowVector.h"
 #include "ScoringObject.h"
 #include <limits>
-namespace DBoW2 {
+namespace DBoW3 {
 
 ///   Vocabulary
 class DBOW_API Vocabulary
@@ -410,6 +410,6 @@ protected:
 };
 
 
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif

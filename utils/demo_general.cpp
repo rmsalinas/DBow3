@@ -1,16 +1,15 @@
 /**
- * File: Demo.cpp
- * Date: November 2011
- * Author: Dorian Galvez-Lopez
- * Description: demo application of DBoW2
+ * Date:  2016
+ * Author: Rafael Muñoz Salinas
+ * Description: demo application of DBoW3
  * License: see the LICENSE.txt file
  */
 
 #include <iostream>
 #include <vector>
 
-// DBoW2
-#include "DBoW2.h"
+// DBoW3
+#include "DBoW3.h"
 
 // OpenCV
 #include <opencv2/core/core.hpp>
@@ -22,7 +21,7 @@
 #endif
 
 
-using namespace DBoW2;
+using namespace DBoW3;
 using namespace std;
 
 
@@ -98,7 +97,7 @@ void testVocCreation(const vector<vector<cv::Mat > > &features)
   const WeightingType weight = TF_IDF;
   const ScoringType score = L1_NORM;
 
-  DBoW2::Vocabulary voc(k, L, weight, score);
+  DBoW3::Vocabulary voc(k, L, weight, score);
 
   cout << "Creating a small " << k << "^" << L << " vocabulary..." << endl;
   voc.create(features);

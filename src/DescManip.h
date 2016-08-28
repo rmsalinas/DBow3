@@ -15,7 +15,7 @@
 #include <string>
 #include "exports.h"
 
-namespace DBoW2 {
+namespace DBoW3 {
 
 /// Class to manipulate descriptors (calculating means, differences and IO routines)
 class DBOW_API DescManip
@@ -65,6 +65,6 @@ private:
   static size_t getnBytes(const cv::Mat & d){return d.cols* d.elemSize();}
 };
 
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif

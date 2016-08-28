@@ -12,7 +12,7 @@
 
 #include <vector>
 #include "exports.h"
-namespace DBoW2 {
+namespace DBoW3 {
 
 /// Id of entries of the database
 typedef unsigned int EntryId;

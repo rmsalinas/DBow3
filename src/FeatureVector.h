@@ -14,7 +14,7 @@
 #include <map>
 #include <vector>
 #include "exports.h"
-namespace DBoW2 {
+namespace DBoW3 {
 
 /// Vector of nodes with indexes of local features
 class  DBOW_API FeatureVector:
@@ -49,7 +49,7 @@ public:
     
 };
 
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif
 

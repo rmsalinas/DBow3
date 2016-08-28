@@ -25,7 +25,7 @@
 #include "FeatureVector.h"
 #include "exports.h"
 
-namespace DBoW2 {
+namespace DBoW3 {
 
 // For query functions
 static int MIN_COMMON_WORDS = 5;
@@ -332,6 +332,6 @@ protected:
 
 // --------------------------------------------------------------------------
 
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif

@@ -13,7 +13,7 @@
 #include <map>
 #include <vector>
 #include "exports.h"
-namespace DBoW2 {
+namespace DBoW3 {
 
 /// Id of words
 typedef unsigned int WordId;
@@ -103,6 +103,6 @@ public:
 	void saveM(const std::string &filename, size_t W) const;
 };
 
-} // namespace DBoW2
+} // namespace DBoW3
 
 #endif
