@@ -21,7 +21,7 @@ typedef unsigned int WordId;
 /// Value of a word
 typedef double WordValue;
 
-/// Id of nodes in the vocabulary treee
+/// Id of nodes in the vocabulary tree
 typedef unsigned int NodeId;
 
 /// L-norms for normalization
