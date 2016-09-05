@@ -79,6 +79,14 @@ Database& Database::operator=
 
 // --------------------------------------------------------------------------
 
+EntryId Database::add(
+  const  cv::Mat &features,
+  BowVector *bowvec, FeatureVector *fvec)
+{
+    std::vector<cv::Mat> vf(features.rows);
+    for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
+    add(vf,bowvec,fvec);
+}
 
 EntryId Database::add(
   const std::vector<cv::Mat> &features,
@@ -220,6 +228,17 @@ void Database::allocate(int nd, int ni)
 
 
 // --------------------------------------------------------------------------
+
+void Database::query(
+  const  cv::Mat &features,
+  QueryResults &ret, int max_results, int max_id) const
+{
+
+    std::vector<cv::Mat> vf(features.rows);
+    for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
+    query(vf, ret, max_results, max_id);
+}
+
 
 
 void Database::query(

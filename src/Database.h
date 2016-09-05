@@ -127,6 +127,15 @@ public:
    */
   EntryId add(const std::vector<cv::Mat> &features,
     BowVector *bowvec = NULL, FeatureVector *fvec = NULL);
+  /**
+   * Adds an entry to the database and returns its index
+   * @param features features of the new entry, one per row
+   * @param bowvec if given, the bow vector of these features is returned
+   * @param fvec if given, the vector of nodes and feature indexes is returned
+   * @return id of new entry
+   */
+  EntryId add(const cv::Mat &features,
+    BowVector *bowvec = NULL, FeatureVector *fvec = NULL);
 
   /**
    * Adss an entry to the database and returns its index
@@ -172,7 +181,17 @@ public:
    */
   void query(const std::vector<cv::Mat> &features, QueryResults &ret,
     int max_results = 1, int max_id = -1) const;
-  
+  /**
+   * Queries the database with some features
+   * @param features query features,one per row
+   * @param ret (out) query results
+   * @param max_results number of results to return. <= 0 means all
+   * @param max_id only entries with id <= max_id are returned in ret.
+   *   < 0 means all
+   */
+  void query(const  cv::Mat &features, QueryResults &ret,
+    int max_results = 1, int max_id = -1) const;
+
   /**
    * Queries the database with a vector
    * @param vec bow vector already normalized

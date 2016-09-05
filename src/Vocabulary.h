@@ -73,14 +73,21 @@ public:
   Vocabulary& operator=(
     const Vocabulary &voc);
   
-  /** 
+  /**
    * Creates a vocabulary from the training features with the already
    * defined parameters
    * @param training_features
    */
   virtual void create
     (const std::vector<std::vector<cv::Mat> > &training_features);
-  
+  /**
+   * Creates a vocabulary from the training features with the already
+   * defined parameters
+   * @param training_features. Each row of a matrix is a feature
+   */
+   virtual void create
+    (const  std::vector<cv::Mat>   &training_features);
+
   /**
    * Creates a vocabulary from the training features, setting the branching
    * factor and the depth levels of the tree
@@ -121,7 +128,13 @@ public:
    */
   virtual void transform(const std::vector<cv::Mat>& features, BowVector &v)
     const;
-  
+  /**
+   * Transforms a set of descriptores into a bow vector
+   * @param features, one per row
+   * @param v (out) bow vector of weighted words
+   */
+  virtual void transform(const  cv::Mat & features, BowVector &v)
+    const;
   /**
    * Transform a set of descriptors into a bow vector and a feature vector
    * @param features

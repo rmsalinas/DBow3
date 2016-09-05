@@ -125,8 +125,20 @@ Vocabulary::operator=
   return *this;
 }
 
-// --------------------------------------------------------------------------
 
+
+void Vocabulary::create(
+  const std::vector< cv::Mat > &training_features)
+{
+    std::vector<std::vector<cv::Mat> > vtf(training_features.size());
+    for(int i=0;i<training_features.size();i++){
+        vtf[i].resize(training_features[i].rows);
+        for(int r=0;r<training_features[i].rows;r++)
+            vtf[i][r]=training_features[i].rowRange(r,r+1);
+    }
+    create(vtf);
+
+}
 
 void Vocabulary::create(
   const std::vector<std::vector<cv::Mat> > &training_features)
@@ -616,6 +628,13 @@ WordId Vocabulary::transform
 
 // --------------------------------------------------------------------------
 
+void Vocabulary::transform(
+  const cv::Mat& features, BowVector &v) const
+{
+    std::vector<cv::Mat> vf(features.rows);
+    for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
+    transform(vf,v);
+}
 
 void Vocabulary::transform(
   const std::vector<cv::Mat>& features, BowVector &v) const

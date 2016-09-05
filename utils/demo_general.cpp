@@ -19,7 +19,7 @@
 #include <opencv2/xfeatures2d/nonfree.hpp>
 #include <opencv2/xfeatures2d.hpp>
 #endif
-
+#include "DescManip.h"
 
 using namespace DBoW3;
 using namespace std;
@@ -31,8 +31,6 @@ class CmdLineParser{int argc; char **argv; public: CmdLineParser(int _argc,char 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-// number of training images
-const int NIMAGES = 4;
 // extended surf gives 128-dimensional vectors
 const bool EXTENDED_SURF = false;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -43,7 +41,14 @@ void wait()
     getchar();
 }
 
-void loadFeatures(vector<vector<cv::Mat> > &features,string path_to_images,string descriptor="") throw (std::exception){
+
+vector<string> readImagePaths(int argc,char **argv,int start){
+    vector<string> paths;
+    for(int i=start;i<argc;i++)    paths.push_back(argv[i]);
+        return paths;
+}
+
+vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string descriptor="") throw (std::exception){
     //select detector
     cv::Ptr<cv::Feature2D> fdetector;
     if (descriptor=="orb")        fdetector=cv::ORB::create();
@@ -57,33 +62,28 @@ void loadFeatures(vector<vector<cv::Mat> > &features,string path_to_images,strin
 
     else throw std::runtime_error("Invalid descriptor");
     assert(!descriptor.empty());
-    features.clear();
-    features.reserve(NIMAGES);
+    vector<cv::Mat>    features;
 
-    vector<cv::KeyPoint> keypoints;
-    cv::Mat descriptors;
 
     cout << "Extracting   features..." << endl;
-    for(int i = 0; i < NIMAGES; ++i)
+    for(int i = 0; i < path_to_images.size(); ++i)
     {
-        stringstream ss;
-        ss << path_to_images<<"image" << i << ".png";
-        cout<<"reading image: "<<ss.str()<<endl;
-        cv::Mat image = cv::imread(ss.str(), 0);
-        if(image.empty())throw std::runtime_error("Could not open image"+ss.str());
+        vector<cv::KeyPoint> keypoints;
+        cv::Mat descriptors;
+        cout<<"reading image: "<<path_to_images[i]<<endl;
+        cv::Mat image = cv::imread(path_to_images[i], 0);
+        if(image.empty())throw std::runtime_error("Could not open image"+path_to_images[i]);
         cout<<"extracting features"<<endl;
         fdetector->detectAndCompute(image, cv::Mat(), keypoints, descriptors);
+        features.push_back(descriptors);
         cout<<"done detecting features"<<endl;
-
-        //turn descriptor into a set of matries, one per row and store in the vector
-        features.push_back(vector<cv::Mat >(descriptors.rows));
-        for(int i = 0; i < descriptors.rows; i++) features.back()[i]=descriptors.rowRange(i,i+1);
     }
+    return features;
 }
 
 // ----------------------------------------------------------------------------
 
-void testVocCreation(const vector<vector<cv::Mat > > &features)
+void testVocCreation(const vector<cv::Mat> &features)
 {
     // branching factor and depth levels
     const int k = 9;
@@ -103,10 +103,10 @@ void testVocCreation(const vector<vector<cv::Mat > > &features)
     // lets do something with this vocabulary
     cout << "Matching images against themselves (0 low, 1 high): " << endl;
     BowVector v1, v2;
-    for(int i = 0; i < NIMAGES; i++)
+    for(int i = 0; i < features.size(); i++)
     {
         voc.transform(features[i], v1);
-        for(int j = 0; j < NIMAGES; j++)
+        for(int j = 0; j < features.size(); j++)
         {
             voc.transform(features[j], v2);
 
@@ -121,9 +121,9 @@ void testVocCreation(const vector<vector<cv::Mat > > &features)
     cout << "Done" << endl;
 }
 
-//// ----------------------------------------------------------------------------
+////// ----------------------------------------------------------------------------
 
-void testDatabase(const vector<vector<cv::Mat > > &features)
+void testDatabase(const  vector<cv::Mat > &features)
 {
     cout << "Creating a small database..." << endl;
 
@@ -137,10 +137,8 @@ void testDatabase(const vector<vector<cv::Mat > > &features)
     // db creates a copy of the vocabulary, we may get rid of "voc" now
 
     // add images to the database
-    for(int i = 0; i < NIMAGES; i++)
-    {
+    for(int i = 0; i < features.size(); i++)
         db.add(features[i]);
-    }
 
     cout << "... done!" << endl;
 
@@ -150,7 +148,7 @@ void testDatabase(const vector<vector<cv::Mat > > &features)
     cout << "Querying the database: " << endl;
 
     QueryResults ret;
-    for(int i = 0; i < NIMAGES; i++)
+    for(int i = 0; i < features.size(); i++)
     {
         db.query(features[i], ret, 4);
 
@@ -185,14 +183,15 @@ int main(int argc,char **argv)
     try{
         CmdLineParser cml(argc,argv);
         if (cml["-h"] || argc==1){
-            cerr<<"Usage: [-i path_to_image_dir] [-d descriptor_name] \n\t descriptors:brisk,surf,orb(default),akaze(only if using opencv 3)"<<endl;
+            cerr<<"Usage:  descriptor_name image0 image1 ... \n\t descriptors:brisk,surf,orb(default),akaze(only if using opencv 3)"<<endl;
             return -1;
         }
-        vector<vector<cv::Mat > > features;
-        string path_to_images=cml("-i","");//read param -i if present. If not, returns emtpy string
-        string descriptor=cml("-d","orb");//read param -d if present. If not, returns "orb"
 
-        loadFeatures(features,path_to_images,descriptor);
+        string path_to_images=cml("-i","");//read param -i if present. If not, returns emtpy string
+        string descriptor=argv[1];
+
+        auto images=readImagePaths(argc,argv,2);
+        vector< cv::Mat   >   features= loadFeatures(images,descriptor);
         testVocCreation(features);
 
         wait();
