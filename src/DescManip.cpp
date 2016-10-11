@@ -93,24 +93,26 @@ double DescManip::distance(const cv::Mat &a,  const cv::Mat &b)
 
     //binary descriptor
     if (a.type()==CV_8U){
-        // Bit count function got from:
-        // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
-        // This implementation assumes that a.cols (CV_8U) % sizeof(uint64_t) == 0
 
-        const uint64_t *pa, *pb;
-        pa = a.ptr<uint64_t>(); // a & b are actually CV_8U
-        pb = b.ptr<uint64_t>();
+        uint64_t ret=0;
+        const uchar *pa = a.ptr<uchar>(); // a & b are actually CV_8U
+        const uchar *pb = b.ptr<uchar>();
+        for(int i=0;i<a.cols;i++,pa++,pb++){
+            uchar v=(*pa)^(*pb);
+#ifdef __GNUG__
+            ret+=__builtin_popcount(v);//only in g++
+#else
 
-        uint64_t v, ret = 0;
-        for(size_t i = 0; i < a.cols / sizeof(uint64_t); ++i, ++pa, ++pb)
-        {
-            v = *pa ^ *pb;
-            v = v - ((v >> 1) & (uint64_t)~(uint64_t)0/3);
-            v = (v & (uint64_t)~(uint64_t)0/15*3) + ((v >> 2) & (uint64_t)~(uint64_t)0/15*3);
-            v = (v + (v >> 4)) & (uint64_t)~(uint64_t)0/255*15;
-            ret += (uint64_t)(v * ((uint64_t)~(uint64_t)0/255)) >>(sizeof(uint64_t) - 1) * CHAR_BIT;
-        }
-
+            ret+=v& (1<<0);
+            ret+=v& (1<<1);
+            ret+=v& (1<<2);
+            ret+=v& (1<<3);
+            ret+=v& (1<<4);
+            ret+=v& (1<<5);
+            ret+=v& (1<<6);
+            ret+=v& (1<<7);
+#endif
+    }
         return ret;
     }
     else{
