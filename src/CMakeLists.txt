@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(. ./utils/)
 
 FILE(GLOB hdrs_base "*.h" )
-FILE(GLOB srcs_base "*.cpp")
+FILE(GLOB srcs_base "*.c*")
 
 FILE(GLOB hdrs ${hdrs_base}  )
 FILE(GLOB srcs  ${srcs_base} )

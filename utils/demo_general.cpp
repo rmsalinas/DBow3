@@ -66,7 +66,7 @@ vector< cv::Mat  >  loadFeatures( std::vector<string> path_to_images,string desc
 
 
     cout << "Extracting   features..." << endl;
-    for(int i = 0; i < path_to_images.size(); ++i)
+    for(size_t i = 0; i < path_to_images.size(); ++i)
     {
         vector<cv::KeyPoint> keypoints;
         cv::Mat descriptors;
@@ -103,10 +103,10 @@ void testVocCreation(const vector<cv::Mat> &features)
     // lets do something with this vocabulary
     cout << "Matching images against themselves (0 low, 1 high): " << endl;
     BowVector v1, v2;
-    for(int i = 0; i < features.size(); i++)
+    for(size_t i = 0; i < features.size(); i++)
     {
         voc.transform(features[i], v1);
-        for(int j = 0; j < features.size(); j++)
+        for(size_t j = 0; j < features.size(); j++)
         {
             voc.transform(features[j], v2);
 
@@ -137,7 +137,7 @@ void testDatabase(const  vector<cv::Mat > &features)
     // db creates a copy of the vocabulary, we may get rid of "voc" now
 
     // add images to the database
-    for(int i = 0; i < features.size(); i++)
+    for(size_t i = 0; i < features.size(); i++)
         db.add(features[i]);
 
     cout << "... done!" << endl;
@@ -148,7 +148,7 @@ void testDatabase(const  vector<cv::Mat > &features)
     cout << "Querying the database: " << endl;
 
     QueryResults ret;
-    for(int i = 0; i < features.size(); i++)
+    for(size_t i = 0; i < features.size(); i++)
     {
         db.query(features[i], ret, 4);
 
@@ -172,11 +172,6 @@ void testDatabase(const  vector<cv::Mat > &features)
     cout << "... done! This is: " << endl << db2 << endl;
 }
 
-// ----------------------------------------------------------------------------
-
-void saveFeatures(const  vector< cv::Mat   > &features){
-
-}
 
 // ----------------------------------------------------------------------------
 

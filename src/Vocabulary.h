@@ -235,13 +235,13 @@ public:
   void setScoringType(ScoringType type);
   
   /**
-   * Saves the vocabulary into a file
+   * Saves the vocabulary into a file. If filename extension contains .yml, opencv YALM format is used. Otherwise, binary format is employed
    * @param filename
    */
-  void save(const std::string &filename) const;
-  
+  void save(const std::string &filename, bool binary_compressed=true) const;
+
   /**
-   * Loads the vocabulary from a file
+   * Loads the vocabulary from a file created with save
    * @param filename
    */
   void load(const std::string &filename);
@@ -261,7 +261,7 @@ public:
    */  
   virtual void load(const cv::FileStorage &fs, 
     const std::string &name = "vocabulary");
-  
+
   /** 
    * Stops those words whose weight is below minWeight.
    * Words are stopped by setting their weight to 0. There are not returned
@@ -275,6 +275,11 @@ public:
    * @return number of words stopped now
    */
   virtual int stopWords(double minWeight);
+
+
+  //io to-from a stream
+  void toStream(  std::ostream &str, bool compressed=true) const throw(std::exception);
+  void fromStream(  std::istream &str )   throw(std::exception);
 
 protected:
 

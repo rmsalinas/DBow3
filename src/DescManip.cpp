@@ -225,6 +225,25 @@ void DescManip::toMat32F(const std::vector<cv::Mat> &descriptors,
     }
 }
 
+void DescManip::toStream(const cv::Mat &m,std::ostream &str){
+    assert(m.rows==1 || m.isContinuous());
+    int type=m.type();
+    int cols=m.cols;
+    int rows=m.rows;
+    str.write((char*)&cols,sizeof(cols));
+    str.write((char*)&rows,sizeof(rows));
+    str.write((char*)&type,sizeof(type));
+    str.write((char*)m.ptr<char>(0),m.elemSize()*m.cols);
+}
+
+void DescManip::fromStream(cv::Mat &m,std::istream &str){
+    int type,cols,rows;
+    str.read((char*)&cols,sizeof(cols));
+    str.read((char*)&rows,sizeof(rows));
+    str.read((char*)&type,sizeof(type));
+    m.create(rows,cols,type);
+    str.read((char*)m.ptr<char>(0),m.elemSize()*m.cols);
+}
 
 
 // --------------------------------------------------------------------------

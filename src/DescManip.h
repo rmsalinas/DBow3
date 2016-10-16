@@ -59,6 +59,9 @@ public:
   static void toMat32F(const std::vector<cv::Mat> &descriptors,
     cv::Mat &mat);
 
+  /**io routines*/
+  static void toStream(const cv::Mat &m,std::ostream &str);
+  static void fromStream(cv::Mat &m,std::istream &str);
 private:
   /**Returns the number of bytes of the descriptor
    * used for binary descriptors only*/

@@ -218,7 +218,8 @@ ENDIF()
 #------------------------------------------------
 ADD_SUBDIRECTORY(src)
 IF (BUILD_UTILS)
-  ADD_SUBDIRECTORY(utils)
+ADD_SUBDIRECTORY(utils)
+ADD_SUBDIRECTORY(tests)
 ENDIF()
 
 

@@ -1,0 +1,5 @@
+ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+LINK_LIBRARIES(${PROJECT_NAME})
+
+
+ADD_EXECUTABLE(test_iobinary test_iobinary.cpp  )

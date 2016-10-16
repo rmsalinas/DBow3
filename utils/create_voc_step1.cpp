@@ -1,10 +1,4 @@
-/**
- * Date:  2016
- * Author: Rafael Muñoz Salinas
- * Description: demo application of DBoW3
- * License: see the LICENSE.txt file
- */
-
+//Second step,creates the vocabulary from the set of features. It can be slow
 #include <iostream>
 #include <vector>
 
@@ -30,7 +24,7 @@ vector<cv::Mat> features;
     uint32_t size;
     ifile.read((char*)&size,sizeof(size));
     features.resize(size);
-    for(int i=0;i<size;i++){
+    for(size_t i=0;i<size;i++){
 
         uint32_t cols,rows,type;
         ifile.read( (char*)&cols,sizeof(cols));
