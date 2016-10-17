@@ -41,6 +41,7 @@ endif()
 #
 OPTION(BUILD_UTILS	"Set to OFF to not build utils" ON)
 OPTION(USE_CONTRIB 	"Set to ON if contrib are installed" OFF)
+OPTION(BUILD_SHARED_LIBS 	"Set to OFF to build static libraries" ON)
 
 # ----------------------------------------------------------------------------
 #   Find Dependencies
@@ -197,11 +198,7 @@ ELSE()  # MSVC
 
 
 ENDIF()#END OF COMPILER SPECIFIC OPTIONS
-find_package(OpenMP  )
-if (OPENMP_FOUND)
-        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} ")
-ENDIF()
+
 
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_C_FLAGS}")
     SET(CMAKE_CXX_FLAGS_RELEASE "${EXTRA_C_FLAGS_RELEASE}")

@@ -123,6 +123,32 @@ void BowVector::saveM(const std::string &filename, size_t W) const
   
   f.close();
 }
+// --------------------------------------------------------------------------
+
+void BowVector::toStream(std::ostream &str)const{
+    uint32_t s=size();
+    str.write((char*)&s,sizeof(s));
+    for(auto d:*this){
+        str.write((char*)&d.first,sizeof(d.first));
+        str.write((char*)&d.second,sizeof(d.second));
+    }
+}
+// --------------------------------------------------------------------------
+
+void BowVector::fromStream(std::istream &str){
+clear();
+uint32_t s;
+
+str.read((char*)&s,sizeof(s));
+for(int i=0;i<s;i++){
+    WordId wid;
+    WordValue wv;
+    str.read((char*)&wid,sizeof(wid));
+    str.read((char*)&wv,sizeof(wv));
+    insert(std::make_pair(wid,wv));
+}
+
+}
 
 // --------------------------------------------------------------------------
 

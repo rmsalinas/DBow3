@@ -101,6 +101,10 @@ public:
 	 * @param W number of words in the vocabulary
 	 */
 	void saveM(const std::string &filename, size_t W) const;
+
+    //serialization
+    void toStream(std::ostream &str)const;
+    void fromStream(std::istream &str);
 };
 
 } // namespace DBoW3
