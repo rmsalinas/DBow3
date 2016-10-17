@@ -7,7 +7,7 @@ DBoW3 is an improved version of the DBow2 library, an open source C++ library fo
   * DBoW3 is able to use both binary and floating point descriptors out of the box. No need to reimplement any class for any descriptor.
   * DBoW3 compiles both in linux and windows.  
   * Some pieces of code have been rewritten to optimize speed. The interface of DBoW3 has been simplified.
-
+  * Use of binary files and yml. Binary files are 4-5 times faster to load/save than yml. Also, they can be compressed.
 
 ## 
 ## Citing
