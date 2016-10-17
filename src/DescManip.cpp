@@ -135,6 +135,8 @@ double DescManip::distance(const cv::Mat &a,  const cv::Mat &b)
 std::string DescManip::toString(const cv::Mat &a)
 {
     stringstream ss;
+    //introduce a magic value to distinguish from DBOw2
+    ss<<"dbw3 ";
     //save size and type
 
 
@@ -160,23 +162,39 @@ std::string DescManip::toString(const cv::Mat &a)
 void DescManip::fromString(cv::Mat &a, const std::string &s)
 {
 
-  int type,cols;
-  stringstream ss(s);
-  ss >>type>>cols;
-  a.create(1,  cols, type);
-  if(type==CV_8UC1){
-  unsigned char *p = a.ptr<unsigned char>();
-  int n;
-  for(int i = 0; i <  a.cols; ++i, ++p)
-    if ( ss >> n) *p = (unsigned char)n;
-  }
-  else{
-      float *p = a.ptr<float>();
-      for(int i = 0; i <  a.cols; ++i, ++p)
-        if ( !(ss >> *p))cerr<<"Error reading. Unexpected EOF. DescManip::fromString"<<endl;
-  }
+    //check if the dbow3 is present
+    string ss_aux;ss_aux.reserve(10);
+    for(size_t i=0;i<10 && i<s.size();i++)
+        ss_aux.push_back(s[i]);
+    if(ss_aux.find("dbw3")==std::string::npos){//is dbow2
+        //READ UNTIL END
+        stringstream ss(s);
+        int val;
+        vector<uchar> data;data.reserve(100);
+        while( ss>>val) data.push_back(val);
+        //copy to a
+        a.create(1,data.size(),CV_8UC1);
+        memcpy(a.ptr<char>(0),&data[0],data.size());
+    }
+    else{
+        int type,cols;
+        stringstream ss(s);
+        ss >>type>>cols;
+        a.create(1,  cols, type);
+        if(type==CV_8UC1){
+            unsigned char *p = a.ptr<unsigned char>();
+            int n;
+            for(int i = 0; i <  a.cols; ++i, ++p)
+                if ( ss >> n) *p = (unsigned char)n;
+        }
+        else{
+            float *p = a.ptr<float>();
+            for(int i = 0; i <  a.cols; ++i, ++p)
+                if ( !(ss >> *p))cerr<<"Error reading. Unexpected EOF. DescManip::fromString"<<endl;
+        }
 
-  
+    }
+
 }
 
 // --------------------------------------------------------------------------

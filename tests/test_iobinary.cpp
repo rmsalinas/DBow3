@@ -21,15 +21,17 @@ int main(int argc,char **argv)
     try{
         CmdLineParser cml(argc,argv);
         if (cml["-h"] || argc!=3){
-            cerr<<"Usage:  in.yml.out out.dbow"<<endl;
+            cerr<<"Usage:  in.yml out.dbow"<<endl;
             return -1;
         }
         DBoW3::Vocabulary voc;
         voc.load(argv[1]);
+        cout<<"loaded"<<endl;
         voc.save(argv[2]);
-        DBoW3::Vocabulary voc2;
-        voc2.load(argv[2]);
-        voc2.save(string(argv[2])+"-copy");
+//        DBoW3::Vocabulary voc2;
+//        voc2.load(argv[2]);
+//        cout<<"loaded"<<endl;
+//        voc2.save(string(argv[2])+"-copy",false);
 
 
     }catch(std::exception &ex){

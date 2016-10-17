@@ -242,10 +242,10 @@ public:
 
   /**
    * Loads the vocabulary from a file created with save
-   * @param filename
+   * @param filename.
    */
   void load(const std::string &filename);
-  
+
   /** 
    * Saves the vocabulary to a file storage structure
    * @param fn node in file storage
@@ -401,6 +401,11 @@ protected:
    * @param voc
    */
    DBOW_API friend std::ostream& operator<<(std::ostream &os,  const Vocabulary &voc);
+
+   /**Loads from ORBSLAM txt files
+    */
+   void load_fromtxt(const std::string &filename)throw(std::runtime_error);
+
 protected:
 
   /// Branching factor

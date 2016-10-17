@@ -931,12 +931,18 @@ void Vocabulary::load(const std::string &filename)
 
     }
     else{
+        if ( filename.find(".txt")!=std::string::npos){
+            //read from a text file (used in ORBSLAM2)
+            load_fromtxt(filename);
+        }
+        else{
         cv::FileStorage fs(filename.c_str(), cv::FileStorage::READ);
         if(!fs.isOpened()) throw std::string("Could not open file ") + filename;
-
         this->load(fs);
+        }
     }
 }
+
 
 void Vocabulary::save(cv::FileStorage &f,
   const std::string &name) const
@@ -1088,7 +1094,79 @@ void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(
 }
 
 
+void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_error){
 
+    std::ifstream ifile(filename);
+    if(!ifile)throw std::runtime_error("Vocabulary:: load_fromtxt  Could not open file for reading:"+filename);
+    int n1, n2;
+    {
+    std::string str;
+    getline(ifile,str);
+    std::stringstream ss(str);
+    ss>>m_k>>m_L>>n1>>n2;
+    }
+    if(m_k<0 || m_k>20 || m_L<1 || m_L>10 || n1<0 || n1>5 || n2<0 || n2>3)
+         throw std::runtime_error( "Vocabulary loading failure: This is not a correct text file!" );
+
+    m_scoring = (ScoringType)n1;
+    m_weighting = (WeightingType)n2;
+    createScoringObject();
+    // nodes
+       int expected_nodes =
+       (int)((pow((double)m_k, (double)m_L + 1) - 1)/(m_k - 1));
+       m_nodes.reserve(expected_nodes);
+
+       m_words.reserve(pow((double)m_k, (double)m_L + 1));
+
+       m_nodes.resize(1);
+       m_nodes[0].id = 0;
+
+       while(!ifile.eof()){
+           std::string snode;
+           getline(ifile,snode);
+           std::cout<<snode<<std::endl;
+           if (snode.size()==0)break;
+           std::stringstream ssnode(snode);
+
+           int nid = m_nodes.size();
+           m_nodes.resize(m_nodes.size()+1);
+           m_nodes[nid].id = nid;
+
+           int pid ;
+           ssnode >> pid;
+           m_nodes[nid].parent = pid;
+           m_nodes[pid].children.push_back(nid);
+
+           int nIsLeaf;
+           ssnode >> nIsLeaf;
+
+           //read until the end and add to data
+           std::vector<float> data;data.reserve(100);
+           float d;
+           while( ssnode>>d) data.push_back(d);
+           //the weight is the last
+           m_nodes[nid].weight=data.back();
+           data.pop_back();//remove
+           //the rest, to the descriptor
+           m_nodes[nid].descriptor.create(1,data.size(),CV_8UC1);
+           auto ptr=m_nodes[nid].descriptor.ptr<uchar>(0);
+           for(auto d:data) *ptr++=d;
+
+
+           if(nIsLeaf>0)
+           {
+               int wid = m_words.size();
+               m_words.resize(wid+1);
+
+               m_nodes[nid].word_id = wid;
+               m_words[wid] = &m_nodes[nid];
+           }
+           else
+           {
+               m_nodes[nid].children.reserve(m_k);
+           }
+       }
+}
 void Vocabulary::fromStream(  std::istream &str )   throw(std::exception){
 
 
