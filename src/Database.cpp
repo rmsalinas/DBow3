@@ -72,7 +72,7 @@ Database& Database::operator=
     m_ifile = db.m_ifile;
     m_nentries = db.m_nentries;
     m_use_di = db.m_use_di;
-    setVocabulary(*db.m_voc);
+    if (db.m_voc!=0) setVocabulary(*db.m_voc);
   }
   return *this;
 }

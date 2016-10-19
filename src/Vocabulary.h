@@ -121,6 +121,9 @@ public:
    */
   virtual inline bool empty() const{ return m_words.empty();}
 
+  /** Clears the vocabulary object
+   */
+  void clear();
   /**
    * Transforms a set of descriptores into a bow vector
    * @param features

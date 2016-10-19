@@ -1317,4 +1317,15 @@ std::ostream& operator<<(std::ostream &os,
 
   return os;
 }
+/**
+ * @brief Vocabulary::clear
+ */
+void Vocabulary::clear(){
+    delete m_scoring_object;
+    m_scoring_object=0;
+    m_nodes.clear();
+    m_words.clear();
+
+}
+
 }
