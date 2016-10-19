@@ -1332,6 +1332,11 @@ int Vocabulary::getDescritorSize()const
     if (m_words.size()==0)return -1;
     else return m_words[0]->descriptor.cols;
 }
+int Vocabulary::getDescritorType()const{
+
+    if (m_words.size()==0)return -1;
+    else return m_words[0]->descriptor.type();
+}
 
 
 }

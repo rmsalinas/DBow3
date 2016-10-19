@@ -283,6 +283,9 @@ public:
   /** Returns the size of the descriptor employed. If the Vocabulary is empty, returns -1
    */
   int getDescritorSize()const;
+  /** Returns the type of the descriptor employed normally(8U_C1, 32F_C1)
+   */
+  int getDescritorType()const;
   //io to-from a stream
   void toStream(  std::ostream &str, bool compressed=true) const throw(std::exception);
   void fromStream(  std::istream &str )   throw(std::exception);
