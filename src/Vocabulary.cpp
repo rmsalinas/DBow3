@@ -1002,17 +1002,15 @@ void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(
     uint64_t sig=88877711233;//magic number describing the file
     out_str.write((char*)&sig,sizeof(sig));
     out_str.write((char*)&compressed,sizeof(compressed));
-
+    uint32_t nnodes=m_nodes.size();
+    out_str.write((char*)&nnodes,sizeof(nnodes));
+    if (nnodes==0)return;
     //save everything to a stream
     std::stringstream aux_stream;
     aux_stream.write((char*)&m_k,sizeof(m_k));
     aux_stream.write((char*)&m_L,sizeof(m_L));
     aux_stream.write((char*)&m_scoring,sizeof(m_scoring));
     aux_stream.write((char*)&m_weighting,sizeof(m_weighting));
-
-    //count the number of nodes
-    int nnodes=m_nodes.size()-1;
-    aux_stream.write((char*)&nnodes,sizeof(nnodes));
     //nodes
     std::vector<NodeId> parents={0};// root
 
@@ -1106,10 +1104,12 @@ void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_er
        m_nodes.resize(1);
        m_nodes[0].id = 0;
 
+       int counter=0;
        while(!ifile.eof()){
            std::string snode;
            getline(ifile,snode);
-           std::cout<<snode<<std::endl;
+           if (counter++%100==0)std::cerr<<".";
+          // std::cout<<snode<<std::endl;
            if (snode.size()==0)break;
            std::stringstream ssnode(snode);
 
@@ -1162,7 +1162,9 @@ void Vocabulary::fromStream(  std::istream &str )   throw(std::exception){
     if (sig!=88877711233) throw std::runtime_error("Vocabulary::fromStream  is not of appropriate type");
     bool compressed;
     str.read((char*)&compressed,sizeof(compressed));
-
+    uint32_t nnodes;
+    str.read((char*)&nnodes,sizeof(nnodes));
+    if(nnodes==0)return;
     std::stringstream decompressed_stream;
     std::istream *_used_str=0;
     if (compressed){
@@ -1193,9 +1195,7 @@ void Vocabulary::fromStream(  std::istream &str )   throw(std::exception){
     _used_str->read((char*)&m_weighting,sizeof(m_weighting));
 
     createScoringObject();
-    int nnodes;
-    _used_str->read((char*)&nnodes,sizeof(nnodes));
-    m_nodes.resize(nnodes + 1); // +1 to include root
+    m_nodes.resize(nnodes );
     m_nodes[0].id = 0;
 
 
