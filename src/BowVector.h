@@ -102,6 +102,8 @@ public:
 	 */
 	void saveM(const std::string &filename, size_t W) const;
 
+    //returns a unique number from the configuration
+    uint64_t getSignature()const;
     //serialization
     void toStream(std::ostream &str)const;
     void fromStream(std::istream &str);

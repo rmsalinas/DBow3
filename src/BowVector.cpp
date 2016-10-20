@@ -150,6 +150,13 @@ for(int i=0;i<s;i++){
 
 }
 
+uint64_t BowVector::getSignature()const{
+uint64_t sig=0;
+for(auto ww:*this) sig+=ww.first+1e6*ww.second;
+return sig;
+}
+
+
 // --------------------------------------------------------------------------
 
 } // namespace DBoW3

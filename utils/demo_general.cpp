@@ -180,21 +180,17 @@ int main(int argc,char **argv)
 
     try{
         CmdLineParser cml(argc,argv);
-        if (cml["-h"] || argc==1){
-            cerr<<"Usage:  descriptor_name action output image0 image1 ... \n\t descriptors:brisk,surf,orb(default),akaze(only if using opencv 3)"<<endl;
-            cerr<<"actions:\n\t0 : compute and save features\n\t1:create voc from features"<<endl;
-            return -1;
+        if (cml["-h"] || argc<=2){
+            cerr<<"Usage:  descriptor_name     image0 image1 ... \n\t descriptors:brisk,surf,orb ,akaze(only if using opencv 3)"<<endl;
+             return -1;
         }
 
         string descriptor=argv[1];
-        string out_features=argv[2];
-        string out_voc=argv[3];
 
-        auto images=readImagePaths(argc,argv,4);
+        auto images=readImagePaths(argc,argv,2);
         vector< cv::Mat   >   features= loadFeatures(images,descriptor);
         testVocCreation(features);
 
-        wait();
 
         testDatabase(features);
 
