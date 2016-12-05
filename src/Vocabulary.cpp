@@ -2,6 +2,7 @@
 #include "DescManip.h"
 #include "quicklz.h"
 #include <sstream>
+#include "timers.h"
 namespace DBoW3{
 // --------------------------------------------------------------------------
 
@@ -616,12 +617,68 @@ WordId Vocabulary::transform
 // --------------------------------------------------------------------------
 
 void Vocabulary::transform(
-  const cv::Mat& features, BowVector &v) const
+        const cv::Mat& features, BowVector &v) const
 {
-    std::vector<cv::Mat> vf(features.rows);
-    for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
-    transform(vf,v);
+    //    std::vector<cv::Mat> vf(features.rows);
+    //    for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
+    //    transform(vf,v);
+
+
+
+    v.clear();
+
+    if(empty())
+    {
+        return;
+    }
+
+    // normalize
+    LNorm norm;
+    bool must = m_scoring_object->mustNormalize(norm);
+
+
+    if(m_weighting == TF || m_weighting == TF_IDF)
+    {
+        for(int r=0;r<features.rows;r++)
+        {
+            WordId id;
+            WordValue w;
+            // w is the idf value if TF_IDF, 1 if TF
+            transform(features.row(r), id, w);
+            // not stopped
+            if(w > 0)  v.addWeight(id, w);
+        }
+
+        if(!v.empty() && !must)
+        {
+            // unnecessary when normalizing
+            const double nd = v.size();
+            for(BowVector::iterator vit = v.begin(); vit != v.end(); vit++)
+                vit->second /= nd;
+        }
+
+    }
+    else // IDF || BINARY
+    {
+        for(int r=0;r<features.rows;r++)
+        {
+            WordId id;
+            WordValue w;
+            // w is idf if IDF, or 1 if BINARY
+
+            transform(features.row(r), id, w);
+
+            // not stopped
+            if(w > 0) v.addIfNotExist(id, w);
+
+        } // if add_features
+    } // if m_weighting == ...
+
+    if(must) v.normalize(norm);
+
 }
+
+
 
 void Vocabulary::transform(
   const std::vector<cv::Mat>& features, BowVector &v) const
@@ -771,7 +828,7 @@ void Vocabulary::transform(const cv::Mat &feature,
   WordId &word_id, WordValue &weight, NodeId *nid, int levelsup) const
 {
   // propagate the feature down the tree
-  std::vector<NodeId> nodes;
+
 
   // level at which the node must be stored in nid, if given
   const int nid_level = m_L - levelsup;
@@ -783,14 +840,12 @@ void Vocabulary::transform(const cv::Mat &feature,
   do
   {
     ++current_level;
-    nodes = m_nodes[final_id].children;
-    final_id = nodes[0];
+    auto const  &nodes = m_nodes[final_id].children;
+    double best_d = std::numeric_limits<double>::max();
+//    DescManip::distance(feature, m_nodes[final_id].descriptor);
 
-    double best_d = DescManip::distance(feature, m_nodes[final_id].descriptor);
-
-    for(auto nit = nodes.begin() + 1; nit != nodes.end(); ++nit)
+    for(const auto  &id:nodes)
     {
-      NodeId id = *nit;
       double d = DescManip::distance(feature, m_nodes[id].descriptor);
       if(d < best_d)
       {
@@ -809,8 +864,97 @@ void Vocabulary::transform(const cv::Mat &feature,
   weight = m_nodes[final_id].weight;
 }
 
-// --------------------------------------------------------------------------
 
+
+void Vocabulary::transform(const cv::Mat &feature,
+  WordId &word_id, WordValue &weight ) const
+{
+  // propagate the feature down the tree
+
+
+  // level at which the node must be stored in nid, if given
+
+  NodeId final_id = 0; // root
+//maximum speed by computing here distance and avoid calling to DescManip::distance
+
+  //binary descriptor
+ // int ntimes=0;
+  if (feature.type()==CV_8U){
+      do
+      {
+          auto const  &nodes = m_nodes[final_id].children;
+          uint64_t best_d = std::numeric_limits<uint64_t>::max();
+          int idx=0,bestidx=0;
+           for(const auto  &id:nodes)
+          {
+              //compute distance
+             //  std::cout<<idx<< " "<<id<<" "<< m_nodes[id].descriptor<<std::endl;
+              uint64_t dist= DescManip::distance_8uc1(feature, m_nodes[id].descriptor);
+              if(dist < best_d)
+              {
+                  best_d = dist;
+                  final_id = id;
+                  bestidx=idx;
+              }
+              idx++;
+          }
+        // std::cout<<bestidx<<" "<<final_id<<" d:"<<best_d<<" "<<m_nodes[final_id].descriptor<<  std::endl<<std::endl;
+      } while( !m_nodes[final_id].isLeaf() );
+   }
+
+//      uint64_t ret=0;
+//      const uchar *pb = b.ptr<uchar>();
+//      for(int i=0;i<a.cols;i++,pa++,pb++){
+//          uchar v=(*pa)^(*pb);
+//#ifdef __GNUG__
+//          ret+=__builtin_popcount(v);//only in g++
+//#else
+
+//          ret+=v& (1<<0);
+//          ret+=v& (1<<1);
+//          ret+=v& (1<<2);
+//          ret+=v& (1<<3);
+//          ret+=v& (1<<4);
+//          ret+=v& (1<<5);
+//          ret+=v& (1<<6);
+//          ret+=v& (1<<7);
+//#endif
+//  }
+//      return ret;
+//  }
+//  else{
+//      double sqd = 0.;
+//      assert(a.type()==CV_32F);
+//      assert(a.rows==1);
+//      const float *a_ptr=a.ptr<float>(0);
+//      const float *b_ptr=b.ptr<float>(0);
+//      for(int i = 0; i < a.cols; i ++)
+//          sqd += (a_ptr[i  ] - b_ptr[i  ])*(a_ptr[i  ] - b_ptr[i  ]);
+//      return sqd;
+//  }
+
+
+//  do
+//  {
+//    auto const  &nodes = m_nodes[final_id].children;
+//    double best_d = std::numeric_limits<double>::max();
+
+//    for(const auto  &id:nodes)
+//    {
+//      double d = DescManip::distance(feature, m_nodes[id].descriptor);
+//      if(d < best_d)
+//      {
+//        best_d = d;
+//        final_id = id;
+//      }
+//    }
+//  } while( !m_nodes[final_id].isLeaf() );
+
+  // turn node id into word id
+  word_id = m_nodes[final_id].word_id;
+  weight = m_nodes[final_id].weight;
+}
+// --------------------------------------------------------------------------
 
 NodeId Vocabulary::getParentNode
   (WordId wid, int levelsup) const

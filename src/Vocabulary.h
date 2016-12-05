@@ -25,10 +25,10 @@
 #include "ScoringObject.h"
 #include <limits>
 namespace DBoW3 {
-
 ///   Vocabulary
 class DBOW_API Vocabulary
 {		
+friend class FastSearch;
 public:
   
   /**
@@ -290,7 +290,7 @@ public:
   void toStream(  std::ostream &str, bool compressed=true) const throw(std::exception);
   void fromStream(  std::istream &str )   throw(std::exception);
 
-protected:
+ protected:
 
   ///  reference to descriptor
   typedef const cv::Mat pDescriptor;
@@ -354,7 +354,17 @@ protected:
    * @param levelsup
    */
   virtual void transform(const cv::Mat &feature,
-    WordId &id, WordValue &weight, NodeId* nid = NULL, int levelsup = 0) const;
+    WordId &id, WordValue &weight, NodeId* nid  , int levelsup = 0) const;
+  /**
+   * Returns the word id associated to a feature
+   * @param feature
+   * @param id (out) word id
+   * @param weight (out) word weight
+   * @param nid (out) if given, id of the node "levelsup" levels up
+   * @param levelsup
+   */
+  virtual void transform(const cv::Mat &feature,
+    WordId &id, WordValue &weight ) const;
 
   /**
    * Returns the word id associated to a feature
@@ -438,7 +448,10 @@ protected:
   /// Words of the vocabulary (tree leaves)
   /// this condition holds: m_words[wid]->word_id == wid
   std::vector<Node*> m_words;
-  
+public:
+  //for debug (REMOVE)
+  inline Node* getNodeWord(uint32_t idx){return m_words[idx];}
+
 };
 
 

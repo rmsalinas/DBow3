@@ -36,7 +36,7 @@ void DescManip::meanValue(const std::vector<cv::Mat> &descriptors,
     //binary descriptor
     if (descriptors[0].type()==CV_8U ){
         //determine number of bytes of the binary descriptor
-        int L= getnBytes( descriptors[0]);
+        int L= getDescSizeBytes( descriptors[0]);
         vector<int> sum( L * 8, 0);
 
         for(size_t i = 0; i < descriptors.size(); ++i)
@@ -87,6 +87,7 @@ void DescManip::meanValue(const std::vector<cv::Mat> &descriptors,
 }
 
 // --------------------------------------------------------------------------
+static  inline uint32_t distance_8uc1(const cv::Mat &a, const cv::Mat &b);
 
 double DescManip::distance(const cv::Mat &a,  const cv::Mat &b)
 {
@@ -94,26 +95,27 @@ double DescManip::distance(const cv::Mat &a,  const cv::Mat &b)
     //binary descriptor
     if (a.type()==CV_8U){
 
-        uint64_t ret=0;
-        const uchar *pa = a.ptr<uchar>(); // a & b are actually CV_8U
-        const uchar *pb = b.ptr<uchar>();
-        for(int i=0;i<a.cols;i++,pa++,pb++){
-            uchar v=(*pa)^(*pb);
-#ifdef __GNUG__
-            ret+=__builtin_popcount(v);//only in g++
-#else
+        // Bit count function got from:
+         // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
+         // This implementation assumes that a.cols (CV_8U) % sizeof(uint64_t) == 0
 
-            ret+=v& (1<<0);
-            ret+=v& (1<<1);
-            ret+=v& (1<<2);
-            ret+=v& (1<<3);
-            ret+=v& (1<<4);
-            ret+=v& (1<<5);
-            ret+=v& (1<<6);
-            ret+=v& (1<<7);
-#endif
-    }
-        return ret;
+         const uint64_t *pa, *pb;
+         pa = a.ptr<uint64_t>(); // a & b are actually CV_8U
+         pb = b.ptr<uint64_t>();
+
+         uint64_t v, ret = 0;
+         for(size_t i = 0; i < a.cols / sizeof(uint64_t); ++i, ++pa, ++pb)
+         {
+           v = *pa ^ *pb;
+           v = v - ((v >> 1) & (uint64_t)~(uint64_t)0/3);
+           v = (v & (uint64_t)~(uint64_t)0/15*3) + ((v >> 2) &
+             (uint64_t)~(uint64_t)0/15*3);
+           v = (v + (v >> 4)) & (uint64_t)~(uint64_t)0/255*15;
+           ret += (uint64_t)(v * ((uint64_t)~(uint64_t)0/255)) >>
+             (sizeof(uint64_t) - 1) * CHAR_BIT;
+         }
+
+         return ret;
     }
     else{
         double sqd = 0.;
@@ -211,7 +213,7 @@ void DescManip::toMat32F(const std::vector<cv::Mat> &descriptors,
     if(descriptors[0].type()==CV_8UC1){
 
         const size_t N = descriptors.size();
-        int L=getnBytes(descriptors[0]);
+        int L=getDescSizeBytes(descriptors[0]);
         mat.create(N,  L*8, CV_32F);
         float *p = mat.ptr<float>();
 
