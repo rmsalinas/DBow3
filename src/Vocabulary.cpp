@@ -1033,7 +1033,7 @@ void Vocabulary::save(const std::string &filename,  bool binary_compressed) cons
 {
 
     if ( filename.find(".yml")==std::string::npos){
-        std::ofstream file_out(filename);
+        std::ofstream file_out(filename,std::ios::binary);
         if (!file_out) throw std::runtime_error("Vocabulary::saveBinary Could not open file :"+filename+" for writing");
         toStream(file_out,binary_compressed);
     }
@@ -1050,7 +1050,7 @@ void Vocabulary::save(const std::string &filename,  bool binary_compressed) cons
 void Vocabulary::load(const std::string &filename)
 {
     //check first if it is a binary file
-    std::ifstream ifile(filename);
+    std::ifstream ifile(filename,std::ios::binary);
     if (!ifile) throw std::runtime_error("Vocabulary::load Could not open file :"+filename+" for reading");
     uint64_t sig;//magic number describing the file
     ifile.read((char*)&sig,sizeof(sig));
