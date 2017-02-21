@@ -1,5 +1,13 @@
+
+
 DBoW3
 =====
+
+## 
+## For an improved version of this project, please see FBOW https://github.com/rmsalinas/fbow. 
+
+
+
 
 DBoW3 is an improved version of the DBow2 library, an open source C++ library for indexing and converting images into a bag-of-word representation. It implements a hierarchical tree for approximating nearest neighbours in the image feature space and creating a visual vocabulary. DBoW3 also implements an image database with inverted and direct files to index images and enabling quick queries and feature comparisons. The main differences with the previous DBow2 library are:
 
@@ -14,7 +22,14 @@ DBoW3 is an improved version of the DBow2 library, an open source C++ library fo
 ## Citing
 
 If you use this software in an academic work, please cite:
-
+```@online{DBoW3, author = {Rafael Muñoz-Salinas}, 
+   title = {{DBoW3} DBoW3}, 
+  year = 2017, 
+  url = {https://github.com/rmsalinas/DBoW2}, 
+  urldate = {2017-02-17} 
+ } 
+```
+and
     @ARTICLE{GalvezTRO12,
       author={G\'alvez-L\'opez, Dorian and Tard\'os, J. D.},
       journal={IEEE Transactions on Robotics},
