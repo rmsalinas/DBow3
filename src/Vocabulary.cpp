@@ -1198,14 +1198,14 @@ void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(
         int chunkSize=10000;
         std::vector<char> compressed( chunkSize+size_t(400), 0);
         std::vector<char> input( chunkSize, 0);
-        auto total_size= aux_stream.tellp();
+        int64_t total_size= static_cast<int64_t>(aux_stream.tellp());
         uint64_t total_compress_size=0;
         //calculate how many chunks will be written
-        uint32_t nChunks= total_size/chunkSize;
+        uint32_t nChunks= total_size / chunkSize;
         if ( total_size%chunkSize!=0) nChunks++;
         out_str.write((char*)&nChunks, sizeof(nChunks));
         //start compressing the chunks
-        while(total_size!=0){
+		while (total_size != 0){
             int readSize=chunkSize;
             if (total_size<chunkSize) readSize=total_size;
             aux_stream.read(&input[0],readSize);
