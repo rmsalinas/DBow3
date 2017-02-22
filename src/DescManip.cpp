@@ -180,7 +180,7 @@ void DescManip::fromString(cv::Mat &a, const std::string &s)
     }
     else{
         int type,cols;
-        stringstream ss(s);
+        stringstream ss(s.substr(ss_aux.find("dbw3")+5,s.size()-5));
         ss >>type>>cols;
         a.create(1,  cols, type);
         if(type==CV_8UC1){
