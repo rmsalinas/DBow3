@@ -85,7 +85,7 @@ EntryId Database::add(
 {
     std::vector<cv::Mat> vf(features.rows);
     for(int r=0;r<features.rows;r++) vf[r]=features.rowRange(r,r+1);
-    add(vf,bowvec,fvec);
+    return add(vf,bowvec,fvec);
 }
 
 EntryId Database::add(
