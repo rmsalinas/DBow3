@@ -53,6 +53,12 @@ public:
    */
   Vocabulary(const char *filename);
   
+  /**
+   * Creates the vocabulary by loading an input stream
+   * @param filename
+   */
+  Vocabulary(std::istream &filename);
+  
   /** 
    * Copy constructor
    * @param voc
@@ -248,6 +254,12 @@ public:
    * @param filename.
    */
   void load(const std::string &filename);
+
+  /**
+   * Loads the vocabulary from an input stream created with save
+   * @param stream.
+   */
+  bool load(std::istream &stream);
 
   /** 
    * Saves the vocabulary to a file storage structure
