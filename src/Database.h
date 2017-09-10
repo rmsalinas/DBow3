@@ -90,7 +90,7 @@ public:
    * @param T class inherited from Vocabulary
    * @param voc vocabulary to copy
    */
-  inline void setVocabulary(const Vocabulary &voc);
+  void setVocabulary(const Vocabulary &voc);
   
   /**
    * Sets the vocabulary to use and the direct index parameters, and clears
@@ -108,7 +108,7 @@ public:
    * Returns a pointer to the vocabulary used
    * @return vocabulary
    */
-  inline const Vocabulary* getVocabulary() const;
+  const Vocabulary* getVocabulary() const;
 
   /** 
    * Allocates some memory for the direct and inverted indexes
@@ -150,7 +150,7 @@ public:
   /**
    * Empties the database
    */
-  inline void clear();
+  void clear();
 
   /**
    * Returns the number of entries in the database 
