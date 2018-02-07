@@ -36,6 +36,15 @@ Vocabulary::Vocabulary
 // --------------------------------------------------------------------------
 
 
+Vocabulary::Vocabulary
+  (std::istream& stream): m_scoring_object(NULL)
+{
+  load(stream);
+}
+
+// --------------------------------------------------------------------------
+
+
 void Vocabulary::createScoringObject()
 {
   delete m_scoring_object;
@@ -1052,24 +1061,28 @@ void Vocabulary::load(const std::string &filename)
     //check first if it is a binary file
     std::ifstream ifile(filename,std::ios::binary);
     if (!ifile) throw std::runtime_error("Vocabulary::load Could not open file :"+filename+" for reading");
+    if(!load(ifile)) {
+        if ( filename.find(".txt")!=std::string::npos) {
+	    load_fromtxt(filename);
+	} else {
+	    cv::FileStorage fs(filename.c_str(), cv::FileStorage::READ);
+	    if(!fs.isOpened()) throw std::string("Could not open file ") + filename;
+	    load(fs);
+	}
+    }
+}
+
+
+bool Vocabulary::load(std::istream &ifile)
+{
     uint64_t sig;//magic number describing the file
     ifile.read((char*)&sig,sizeof(sig));
-    if (sig==88877711233) {//it is a binary file. read from it
-        ifile.seekg(0,std::ios::beg);
-        fromStream(ifile);
+    if (sig != 88877711233) // Check if it is a binary file.
+        return false;
 
-    }
-    else{
-        if ( filename.find(".txt")!=std::string::npos){
-            //read from a text file (used in ORBSLAM2)
-            load_fromtxt(filename);
-        }
-        else{
-        cv::FileStorage fs(filename.c_str(), cv::FileStorage::READ);
-        if(!fs.isOpened()) throw std::string("Could not open file ") + filename;
-        this->load(fs);
-        }
-    }
+    ifile.seekg(0,std::ios::beg);
+    fromStream(ifile);
+    return true;
 }
 
 
