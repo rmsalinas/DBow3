@@ -178,10 +178,11 @@ void DescManip::fromString(cv::Mat &a, const std::string &s)
         a.create(1,data.size(),CV_8UC1);
         memcpy(a.ptr<char>(0),&data[0],data.size());
     }
-    else{
+    else {
+        char szSign[10];
         int type,cols;
         stringstream ss(s);
-        ss >>type>>cols;
+        ss >> szSign >> type >> cols;
         a.create(1,  cols, type);
         if(type==CV_8UC1){
             unsigned char *p = a.ptr<unsigned char>();
