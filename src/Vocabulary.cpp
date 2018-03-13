@@ -910,7 +910,30 @@ void Vocabulary::transform(const cv::Mat &feature,
         // std::cout<<bestidx<<" "<<final_id<<" d:"<<best_d<<" "<<m_nodes[final_id].descriptor<<  std::endl<<std::endl;
       } while( !m_nodes[final_id].isLeaf() );
    }
-
+  else
+  {
+	  do
+	  {
+		  auto const  &nodes = m_nodes[final_id].children;
+		  uint64_t best_d = std::numeric_limits<uint64_t>::max();
+		  int idx = 0, bestidx = 0;
+		  for (const auto &id : nodes)
+		  {
+			  //compute distance
+			  //  std::cout<<idx<< " "<<id<<" "<< m_nodes[id].descriptor<<std::endl;
+			  uint64_t dist = DescManip::distance(feature, m_nodes[id].descriptor);
+			  //std::cout << id << " " << dist << " " << best_d << std::endl;
+			  if (dist < best_d)
+			  {
+				  best_d = dist;
+				  final_id = id;
+				  bestidx = idx;
+			  }
+			  idx++;
+		  }
+		  // std::cout<<bestidx<<" "<<final_id<<" d:"<<best_d<<" "<<m_nodes[final_id].descriptor<<  std::endl<<std::endl;
+	  } while (!m_nodes[final_id].isLeaf());
+  }
 //      uint64_t ret=0;
 //      const uchar *pb = b.ptr<uchar>();
 //      for(int i=0;i<a.cols;i++,pa++,pb++){
