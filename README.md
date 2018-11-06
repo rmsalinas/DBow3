@@ -29,20 +29,7 @@ If you use this software in an academic work, please cite:
   urldate = {2017-02-17} 
  } 
 ```
-and
-    @ARTICLE{GalvezTRO12,
-      author={G\'alvez-L\'opez, Dorian and Tard\'os, J. D.},
-      journal={IEEE Transactions on Robotics},
-      title={Bags of Binary Words for Fast Place Recognition in Image Sequences},
-      year={2012},
-      month={October},
-      volume={28},
-      number={5},
-      pages={1188--1197},
-      doi={10.1109/TRO.2012.2197158},
-      ISSN={1552-3098}
-    }
-}
+
 
 ## Installation notes
  
