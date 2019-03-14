@@ -3,6 +3,8 @@
 # ----------------------------------------------------------------------------
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+set(CMAKE_CXX_STANDARD 11)
+
 PROJECT(DBoW3)
 set(PROJECT_VERSION "0.0.1")
 string(REGEX MATCHALL "[0-9]" PROJECT_VERSION_PARTS "${PROJECT_VERSION}")
