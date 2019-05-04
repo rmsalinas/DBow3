@@ -3,9 +3,11 @@
 #include "quicklz.h"
 #include <sstream>
 #include "timers.h"
+
+const int MAX_ITERATION = 100;
+
 namespace DBoW3{
 // --------------------------------------------------------------------------
-
 
 Vocabulary::Vocabulary
   (int k, int L, WeightingType weighting, ScoringType scoring)
@@ -263,9 +265,11 @@ void Vocabulary::HKmeansStep(NodeId parent_id,
 
         // to check if clusters move after iterations
         std::vector<int> last_association, current_association;
-
-        while(goon)
+	
+	int count = 0;
+        while(goon && count < MAX_ITERATION)
         {
+	    count++;
             // 1. Calculate clusters
 
             if(first_time)
