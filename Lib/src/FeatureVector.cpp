@@ -7,7 +7,7 @@
  *
  */
 
-#include "FeatureVector.h"
+#include "DBow3/FeatureVector.h"
 #include <map>
 #include <vector>
 #include <iostream>
