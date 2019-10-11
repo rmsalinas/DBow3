@@ -12,6 +12,7 @@
 
 #include <map>
 #include <vector>
+#include <ostream>
 #include "exports.h"
 #if _WIN32
 #include <cstdint>

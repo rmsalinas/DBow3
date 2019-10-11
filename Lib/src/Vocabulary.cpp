@@ -1,8 +1,8 @@
-#include "Vocabulary.h"
-#include "DescManip.h"
-#include "quicklz.h"
+#include "DBow3/Vocabulary.h"
+#include "DBow3/DescManip.h"
+#include "DBow3/quicklz.h"
 #include <sstream>
-#include "timers.h"
+#include "DBow3/timers.h"
 namespace DBoW3{
 // --------------------------------------------------------------------------
 
