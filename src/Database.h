@@ -45,7 +45,6 @@ public:
 
   /**
    * Creates a database with the given vocabulary
-   * @param T class inherited from Vocabulary
    * @param voc vocabulary
    * @param use_di a direct index is used to store feature indexes
    * @param di_levels levels to go up the vocabulary tree to select the 
@@ -87,7 +86,6 @@ public:
 
   /**
    * Sets the vocabulary to use and clears the content of the database.
-   * @param T class inherited from Vocabulary
    * @param voc vocabulary to copy
    */
   void setVocabulary(const Vocabulary &voc);
@@ -95,7 +93,6 @@ public:
   /**
    * Sets the vocabulary to use and the direct index parameters, and clears
    * the content of the database
-   * @param T class inherited from Vocabulary
    * @param voc vocabulary to copy
    * @param use_di a direct index is used to store feature indexes
    * @param di_levels levels to go up the vocabulary tree to select the 
