@@ -1177,7 +1177,7 @@ void Vocabulary::save(cv::FileStorage &f,
 
 }
 
-void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(std::exception){
+void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const noexcept(false){
 
     uint64_t sig=88877711233;//magic number describing the file
     out_str.write((char*)&sig,sizeof(sig));
@@ -1257,7 +1257,7 @@ void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(
 }
 
 
-void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_error){
+void Vocabulary:: load_fromtxt(const std::string &filename)noexcept(false){
 
     std::ifstream ifile(filename);
     if(!ifile)throw std::runtime_error("Vocabulary:: load_fromtxt  Could not open file for reading:"+filename);
@@ -1332,7 +1332,7 @@ void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_er
            }
        }
 }
-void Vocabulary::fromStream(  std::istream &str )   throw(std::exception){
+void Vocabulary::fromStream(  std::istream &str )   noexcept(false){
 
 
     m_words.clear();
