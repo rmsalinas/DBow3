@@ -1,0 +1,10 @@
+set(@PROJECT_NAME@_VERSION @PROJECT_VERSION@)
+
+@PACKAGE_INIT@
+
+set_and_check(@PROJECT_NAME@_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../include")
+cmake_path(SET @PROJECT_NAME@_INCLUDE_DIR NORMALIZE "${@PROJECT_NAME@_INCLUDE_DIR}")
+
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+check_required_components(@PROJECT_NAME@)

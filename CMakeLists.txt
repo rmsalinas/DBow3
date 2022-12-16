@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------------
 #   Basic Configuration
 # ----------------------------------------------------------------------------
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 11)
 
-PROJECT(DBoW3)
-set(PROJECT_VERSION "0.0.1")
-string(REGEX MATCHALL "[0-9]" PROJECT_VERSION_PARTS "${PROJECT_VERSION}")
-list(GET PROJECT_VERSION_PARTS 0 PROJECT_VERSION_MAJOR)
-list(GET PROJECT_VERSION_PARTS 1 PROJECT_VERSION_MINOR)
-list(GET PROJECT_VERSION_PARTS 2 PROJECT_VERSION_PATCH)
+set(VCPKG_ROOT D:/Software/Scoop/apps/vcpkg/current)
+set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+
+PROJECT(DBoW3 VERSION 0.0.1)
 set(PROJECT_SOVERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-message("LIB_INSTALL_DIR: ${LIB_INSTALL_DIR}")
+# set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
+set(LIB_INSTALL_DIR CMAKE_INSTALL_PREFIX)
+message(STATUS "LIB_INSTALL_DIR: ${LIB_INSTALL_DIR}")
 
 #------------------------------------------------------
 # Build type
@@ -40,9 +40,6 @@ else()
     SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/cmake/ /usr/${LIB_INSTALL_DIR}/cmake )
 endif()
 
-
-
-#
 OPTION(BUILD_UTILS	"Set to OFF to not build utils" ON)
 OPTION(USE_CONTRIB 	"Set to ON if contrib are installed" OFF)
 OPTION(BUILD_SHARED_LIBS 	"Set to OFF to build static libraries" ON)
@@ -54,12 +51,15 @@ find_package(OpenCV  REQUIRED)
 IF(USE_CONTRIB)
 add_definitions(-DUSE_CONTRIB)
 ENDIF()
-if(NOT OpenCV_VERSION VERSION_LESS "3.0")
-    ADD_DEFINITIONS(-DOPENCV_VERSION_3)
-    SET(OPENCV_VERSION_3 ON)
-ELSE()
-    SET(OPENCV_VERSION_3 OFF)
-ENDIF()
+
+ADD_DEFINITIONS(-DOPENCV_VERSION_3)
+SET(OPENCV_VERSION_3 ON)
+# if(NOT OpenCV_VERSION VERSION_LESS "3.0")
+#     ADD_DEFINITIONS(-DOPENCV_VERSION_3)
+#     SET(OPENCV_VERSION_3 ON)
+# ELSE()
+#     SET(OPENCV_VERSION_3 OFF)
+# ENDIF()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -76,24 +76,6 @@ IF (INSTALL_DOC)
     INCLUDE("${PROJECT_SOURCE_DIR}/generateDoc.cmake")
     GENERATE_DOCUMENTATION(${PROJECT_SOURCE_DIR}/dox.in)
 ENDIF()
- 
-# ----------------------------------------------------------------------------
-#   Uninstall target, for "make uninstall"
-# ----------------------------------------------------------------------------
-CONFIGURE_FILE( "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" IMMEDIATE @ONLY)
-ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
-
-# ----------------------------------------------------------------------------
-# create configuration file from .in file (If you use windows take care with paths)
-# ----------------------------------------------------------------------------
-
-CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/config.cmake.in" "${PROJECT_BINARY_DIR}/Find${PROJECT_NAME}.cmake")
-CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/config.cmake.in" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
-INSTALL(FILES "${PROJECT_BINARY_DIR}/Find${PROJECT_NAME}.cmake" DESTINATION ${LIB_INSTALL_DIR}/cmake/ )
-INSTALL(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION ${LIB_INSTALL_DIR}/cmake/${PROJECT_NAME} )
-
-
-
 
 # ----------------------------------------------------------------------------
 #   Program Optimization and debug (Extracted from OpenCV)
@@ -206,8 +188,6 @@ ELSE()  # MSVC
 ENDIF()#END OF COMPILER SPECIFIC OPTIONS
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} ${EXTRA_C_FLAGS_RELEASE}")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS}  ${EXTRA_C_FLAGS_DEBUG}")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -std=c++11")
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -std=c++11")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELEASE} ${CMAKE_C_FLAGS_DEBUG}")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_DEBUG}")
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EXTRA_EXE_LINKER_FLAGS}")
@@ -228,6 +208,37 @@ IF (BUILD_TESTS)
 ADD_SUBDIRECTORY(tests)
 ENDIF()
 
+# ----------------------------------------------------------------------------
+# generate the config file that is includes the exports
+# ----------------------------------------------------------------------------
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  ${PROJECT_NAME}ConfigVersion.cmake
+  VERSION
+  ${PROJECT_VERSION}
+  COMPATIBILITY
+  SameMajorVersion
+)
+configure_package_config_file(
+  ${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  INSTALL_DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+install(
+  FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+  DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+
+# ----------------------------------------------------------------------------
+#   Uninstall target, for "make uninstall"
+# ----------------------------------------------------------------------------
+CONFIGURE_FILE( "cmake/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" IMMEDIATE @ONLY)
+ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
 # ----------------------------------------------------------------------------
 # display status message for important variables
