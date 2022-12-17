@@ -11,8 +11,12 @@
 #define __D_T_FEATURE_VECTOR__
 
 #include "BowVector.h"
+
 #include <map>
 #include <vector>
+#include <string>
+#include <iostream>
+
 #include "exports.h"
 namespace DBoW3 {
 
@@ -26,12 +30,12 @@ public:
    * Constructor
    */
   FeatureVector(void);
-  
+
   /**
    * Destructor
    */
   ~FeatureVector(void);
-  
+
   /**
    * Adds a feature to an existing node, or adds a new node with an initial
    * feature
@@ -46,7 +50,7 @@ public:
    * @param v feature vector
    */
   friend std::ostream& operator<<(std::ostream &out, const FeatureVector &v);
-    
+
 };
 
 } // namespace DBoW3
