@@ -396,14 +396,18 @@ void Vocabulary::HKmeansStep(NodeId parent_id,
 
 void Vocabulary::initiateClusters
   (const std::vector<cv::Mat> &descriptors,
-   std::vector<cv::Mat> &clusters) const
+    std::vector<cv::Mat> &clusters) const
 {
   initiateClustersKMpp(descriptors, clusters);
 }
 
 // --------------------------------------------------------------------------
 
-
+void Vocabulary::createNewCentroid(cv::Mat &feature,std::vector<cv::Mat> &clusters){
+  cv::Mat copy;
+  feature.copyTo(copy);
+  clusters.push_back(copy);
+}
 void Vocabulary::initiateClustersKMpp(
   const std::vector<cv::Mat> &pfeatures,
     std::vector<cv::Mat> &clusters) const
@@ -431,8 +435,7 @@ void Vocabulary::initiateClustersKMpp(
   int ifeature = rand()% pfeatures.size();//DUtils::Random::RandomInt(0, pfeatures.size()-1);
 
   // create first cluster
-  clusters.push_back(pfeatures[ifeature]);
-
+  createNewCentroid(pfeatures[ifeature],clusters);
   // compute the initial distances
    std::vector<double>::iterator dit;
   dit = min_dists.begin();
@@ -477,9 +480,7 @@ void Vocabulary::initiateClustersKMpp(
         ifeature = pfeatures.size()-1;
       else
         ifeature = dit - min_dists.begin();
-
-
-      clusters.push_back(pfeatures[ifeature]);
+      createNewCentroid(pfeatures[ifeature],clusters);
     } // if dist_sum > 0
     else
       break;

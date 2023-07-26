@@ -402,7 +402,12 @@ protected:
    */
   virtual void initiateClusters(const std::vector<cv::Mat> &descriptors,
     std::vector<cv::Mat> &clusters) const;
-  
+    /**
+ * @brief Creates a new centroid by making a deep copy of the input feature and stores it in clusters.
+ * @param feature The input feature to be deep copied and used as a new centroid.
+ * @param clusters A vector of cv::Mat objects representing the existing clusters.
+ */
+  void createNewCentroid(cv::Mat &feature,std::vector<cv::Mat> &clusters);
   /**
    * Creates k clusters from the given descriptor sets by running the
    * initial step of kmeans++
