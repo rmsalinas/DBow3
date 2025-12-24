@@ -1066,12 +1066,18 @@ void Vocabulary::save(const std::string &filename,  bool binary_compressed) cons
 
     if ( filename.find(".yml")==std::string::npos){
         std::ofstream file_out(filename,std::ios::binary);
-        if (!file_out) throw std::runtime_error("Vocabulary::saveBinary Could not open file :"+filename+" for writing");
+        if (!file_out){
+          std::cout << "Vocabulary::saveBinary Could not open file :"+filename+" for writing";
+          exit(1);
+        }
         toStream(file_out,binary_compressed);
     }
     else{
         cv::FileStorage fs(filename.c_str(), cv::FileStorage::WRITE);
-        if(!fs.isOpened()) throw std::string("Could not open file ") + filename;
+        if(!fs.isOpened()){
+            std::cout << "Could not open file :"+filename;
+            exit(1);
+        };
         save(fs);
     }
 }
@@ -1083,13 +1089,19 @@ void Vocabulary::load(const std::string &filename)
 {
     //check first if it is a binary file
     std::ifstream ifile(filename,std::ios::binary);
-    if (!ifile) throw std::runtime_error("Vocabulary::load Could not open file :"+filename+" for reading");
+    if (!ifile){
+      std::cout << "Vocabulary::load Could not open file:"+filename+" for reading";
+      exit(1);
+    }
     if(!load(ifile)) {
         if ( filename.find(".txt")!=std::string::npos) {
 	    load_fromtxt(filename);
 	} else {
 	    cv::FileStorage fs(filename.c_str(), cv::FileStorage::READ);
-	    if(!fs.isOpened()) throw std::string("Could not open file ") + filename;
+	    if(!fs.isOpened()) {
+              std::cout << "Could not open file:"+filename+" for reading";
+              exit(1);
+            }
 	    load(fs);
 	}
     }
@@ -1177,7 +1189,7 @@ void Vocabulary::save(cv::FileStorage &f,
 
 }
 
-void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(std::exception){
+void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const {
 
     uint64_t sig=88877711233;//magic number describing the file
     out_str.write((char*)&sig,sizeof(sig));
@@ -1257,10 +1269,13 @@ void Vocabulary::toStream(  std::ostream &out_str, bool compressed) const throw(
 }
 
 
-void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_error){
+void Vocabulary:: load_fromtxt(const std::string &filename){
 
     std::ifstream ifile(filename);
-    if(!ifile)throw std::runtime_error("Vocabulary:: load_fromtxt  Could not open file for reading:"+filename);
+    if(!ifile){
+      std::cout << "Vocabulary:: load_fromtxt  Could not open file for reading:"+filename;
+      exit(1);
+    };
     int n1, n2;
     {
     std::string str;
@@ -1269,8 +1284,10 @@ void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_er
     ss>>m_k>>m_L>>n1>>n2;
     }
     if(m_k<0 || m_k>20 || m_L<1 || m_L>10 || n1<0 || n1>5 || n2<0 || n2>3)
-         throw std::runtime_error( "Vocabulary loading failure: This is not a correct text file!" );
-
+    {
+      std::cout << "Vocabulary loading failure: This is not a correct text file!";
+      exit(1);
+    }
     m_scoring = (ScoringType)n1;
     m_weighting = (WeightingType)n2;
     createScoringObject();
@@ -1332,14 +1349,18 @@ void Vocabulary:: load_fromtxt(const std::string &filename)throw(std::runtime_er
            }
        }
 }
-void Vocabulary::fromStream(  std::istream &str )   throw(std::exception){
+void Vocabulary::fromStream(  std::istream &str ){
 
 
     m_words.clear();
     m_nodes.clear();
     uint64_t sig=0;//magic number describing the file
     str.read((char*)&sig,sizeof(sig));
-    if (sig!=88877711233) throw std::runtime_error("Vocabulary::fromStream  is not of appropriate type");
+    if (sig!=88877711233)
+    {
+      std::cout << "Vocabulary::fromStream  is not of appropriate type";
+      exit(1);
+    }
     bool compressed;
     str.read((char*)&compressed,sizeof(compressed));
     uint32_t nnodes;
